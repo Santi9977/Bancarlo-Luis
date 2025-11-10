@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bancarlo - Luis Alejandro</title>
+
+<!-- Tipografía -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+background: #000;
+color: #2EBC22;
+font-family: 'Inter', sans-serif;
+max-width: 480px;
+margin: auto;
+padding: 0 15px;
+}
+
+header {
+display: flex;
+align-items: center;
+padding: 15px 0;
+}
+
+header img {
+height: 36px;
+margin-right: 10px;
+}
+
+h1 {
+font-size: 26px;
+margin: 0;
+}
+
+#saludo {
+font-size: 20px;
+margin-top: 5px;
+text-align: center;
+}
+
+#saldo {
+font-size: 28px;
+text-align: center;
+margin-top: 10px;
+font-weight: 700;
+}
+
+/* Tarjeta */
+#tarjeta {
+width: 100%;
+margin-top: 20px;
+}
+
+#tarjeta img {
+width: 100%;
+border-radius: 15px;
+object-fit: cover;
+max-height: 260px;
+}
+
+/* Navegación */
+nav {
+display: flex;
+justify-content: center;
+margin-top: 25px;
+}
+
+nav button {
+background: transparent;
+border: none;
+color: #2EBC22;
+font-size: 18px;
+padding: 10px 20px;
+border-bottom: 3px solid transparent;
+}
+
+nav button.active {
+border-bottom: 3px solid #2EBC22;
+font-weight: 700;
+}
+
+/* Secciones */
+.seccion {
+display: none;
+margin-top: 20px;
+}
+
+.seccion.active {
+display: block;
+}
+
+input, select, button {
+width: 100%;
+font-size: 16px;
+padding: 12px;
+margin-bottom: 12px;
+border-radius: 8px;
+border: none;
+}
+
+input, select {
+background: #fff;
+}
+
+button {
+background: #2EBC22;
+color: #000;
+font-weight: 700;
+cursor: pointer;
+}
+
+.btn-volver {
+background: #555;
+color: #fff;
+}
+
+/* Admin */
+#adminControls {
+display: none;
+margin-top: 15px;
+border-top: 1px solid #2EBC22;
+padding-top: 15px;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+<img src="logo_bancarlo.png" alt="Logo">
+<h1>Bancarlo</h1>
+</header>
+
+<div id="saludo">¡Hola, Luis Alejandro!</div>
+<div id="saldo">10000</div>
+
+<div id="tarjeta">
+<img src="tarjeta.jpg" alt="Tarjeta Bancaria">
+</div>
+
+<nav>
+<button class="active" onclick="mostrarSeccion('transferencias')">Transferencias</button>
+<button onclick="mostrarSeccion('prestamos')">Préstamos</button>
+</nav>
+
+<!-- ✅ SECCIÓN TRANSFERENCIAS -->
+<div id="transferencias" class="seccion active">
+<h2>Transferencias</h2>
+
+<select id="contacto">
+<option value="maria">María del Pilar</option>
+<option value="carlo">Carlo Itzae</option>
+<option value="santiago">Santiago Carrizales</option>
+</select>
+
+<input type="number" id="montoTransferencia" placeholder="Monto a transferir">
+
+<input type="password" id="pinTransferencia" placeholder="Ingresa tu PIN">
+
+<button onclick="transferir()">Transferir</button>
+
+<button class="btn-volver" onclick="volverInicio()">Volver</button>
+</div>
+
+<!-- ✅ SECCIÓN PRÉSTAMOS -->
+<div id="prestamos" class="seccion">
+<h2>Préstamos</h2>
+
+<input type="number" id="montoPrestamo" placeholder="Monto (máximo 2000 MXN)">
+
+<button onclick="solicitarPrestamo()">Solicitar préstamo</button>
+
+<button class="btn-volver" onclick="volverInicio()">Volver</button>
+</div>
+
+<!-- ✅ SECCIÓN ADMIN -->
+<div id="admin">
+<h2>Administrador</h2>
+
+<input type="password" id="claveAdmin" placeholder="Contraseña admin">
+<input type="number" id="ajusteSaldo" placeholder="Cantidad a sumar o restar">
+
+<button onclick="ajustarSaldo()">Aplicar cambio</button>
+</div>
+
+<script>
+let saldo = 10000;
+const pinCorrecto = "9870";
+const claveAdminCorrecta = "Ban258000";
+
+const correos = {
+maria: "mpzamorami@gmail.com",
+carlo: "carloitzae52@gmail.com",
+santiago: "luissantiagocarrizaleszamora@gmail.com"
+};
+
+function mostrarSeccion(id) {
+document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+
+document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+event.target.classList.add('active');
+}
+
+function volverInicio() {
+document.querySelectorAll('.seccion').forEach(s => s.classList.remove('active'));
+document.querySelectorAll('nav button')[0].classList.add('active');
+document.getElementById('transferencias').classList.add('active');
+}
+
+function transferir() {
+const monto = parseFloat(document.getElementById("montoTransferencia").value);
+const pin = document.getElementById("pinTransferencia").value;
+const contacto = document.getElementById("contacto").value;
+
+if (pin !== pinCorrecto) {
+alert("PIN incorrecto.");
+return;
+}
+
+if (isNaN(monto) || monto <= 0) {
+alert("Ingresa un monto válido.");
+return;
+}
+
+if (monto > saldo) {
+alert("Saldo insuficiente.");
+return;
+}
+
+saldo -= monto;
+document.getElementById("saldo").textContent = saldo;
+
+alert("Transferencia realizada con éxito a " + contacto);
+
+document.getElementById("montoTransferencia").value = "";
+document.getElementById("pinTransferencia").value = "";
+}
+
+function solicitarPrestamo() {
+const monto = parseFloat(document.getElementById("montoPrestamo").value);
+
+if (isNaN(monto) || monto <= 0) {
+alert("Ingresa un monto válido.");
+return;
+}
+
+if (monto > 2000) {
+alert("El préstamo máximo es de $2000 MXN.");
+return;
+}
+
+saldo += monto;
+document.getElementById("saldo").textContent = saldo;
+
+alert("Préstamo aprobado y añadido al saldo.");
+
+document.getElementById("montoPrestamo").value = "";
+}
+
+function ajustarSaldo() {
+const clave = document.getElementById("claveAdmin").value;
+const ajuste = parseFloat(document.getElementById("ajusteSaldo").value);
+
+if (clave !== claveAdminCorrecta) {
+alert("Contraseña incorrecta.");
+return;
+}
+
+if (isNaN(ajuste)) {
+alert("Ingresa un número válido.");
+return;
+}
+
+saldo += ajuste;
+document.getElementById("saldo").textContent = saldo;
+
+alert("Saldo actualizado.");
+document.getElementById("ajusteSaldo").value = "";
+}
+</script>
+
+</body>
+</html>
